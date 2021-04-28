@@ -1,0 +1,258 @@
+two letters
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(32,3,input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.MaxPooling2D(2,2),
+    tf.keras.layers.Flatten(input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(128,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Test: ~90%
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5), activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5), activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3), activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3), activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 94.49%
+Test: accuracy: 93.59%
+
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (3,3), activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (3,3), activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3), activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3), activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 96.46%
+Test: accuracy: 94.56%
+
+
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 97.46%
+Test: accuracy: 95.17%
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(256,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 97.81%
+Test: accuracy: 95.47%
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 98.60%
+Test: accuracy: 96.34%
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(256,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 98.69%
+Test: accuracy: 96.39%
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 98.68%
+Test: accuracy: 96.43%
+
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(256,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 98.69%
+Test: accuracy: 96.56%
+
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(256,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 99.03%
+Test: accuracy: 96.64%
+
+
+One letter
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(32,3,input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.MaxPooling2D(2,2),
+    tf.keras.layers.Flatten(input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(128,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Test: ~96-97%
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(256,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+Train: accuracy: 99.82%
+Test: accuracy: 98.44%
+
+inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
+model1 = tf.keras.Sequential([ 
+    inputs,
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2)),
+    tf.keras.layers.Dropout(0.25),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512,activation='relu'),
+    tf.keras.layers.Dense(256,activation='relu'),
+    tf.keras.layers.Dense(classCount, activation='softmax')
+])
+
+
+Train: accuracy: 99.86%
+Test: accuracy: 98.48%
