@@ -5,6 +5,7 @@ For trainging with GPU (Manjaro): cuda, python-cuda, python-pycuda, cudnn, tenso
 
 ## Structure
 
+```
 letters_recognition  
 ├── components  
 │   ├── CMakeLists.txt  
@@ -38,6 +39,8 @@ letters_recognition
 ├── README.md   
 ├── test_network_one_letter.py  
 └── test_network_two_letters.py  
+
+```
 
 ## Setup and Usage
 
