@@ -109,7 +109,7 @@ MCP = ModelCheckpoint('model/two_letters/Best_points.h5',verbose=1,save_best_onl
 ES = EarlyStopping(monitor='val_accuracy',min_delta=0,verbose=0,restore_best_weights = True,patience=5,mode='max')
 RLP = ReduceLROnPlateau(monitor='val_loss',patience=5,factor=0.2,min_lr=0.0001)
 
-model1.fit(
+history = model1.fit(
         train_ds,
         validation_data=val_ds,
         epochs=10,
@@ -122,3 +122,27 @@ scores = model1.evaluate(val_ds)
 print("Test: %s: %.2f%%" % (model1.metrics_names[1], scores[1]*100))
 
 model1.save("model/two_letters/my_model")
+
+epochs = history.epoch
+loss = history.history['loss']
+validation_loss = history.history['val_loss']
+
+plt.title('Loss')
+plt.xlabel('Epochs')
+plt.ylabel('loss')
+plt.plot(epochs, loss, c='red', label='training')
+plt.plot(epochs, validation_loss, c='orange', label='validation')
+plt.legend(loc='best')
+plt.savefig('two_letters_loss.png')
+plt.clf()
+
+acc = history.history['accuracy']
+validation_acc = history.history['val_accuracy']
+
+plt.title('Accuracy')
+plt.xlabel('epochs')
+plt.ylabel('acccuracy')
+plt.plot(epochs, acc, c='red', label='training')
+plt.plot(epochs, validation_acc, c='orange', label='validation')
+plt.legend(loc='best')
+plt.savefig('two_letters_acc.png')
