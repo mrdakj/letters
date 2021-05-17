@@ -179,11 +179,10 @@ Train: accuracy: 98.69%
 Test: accuracy: 96.56%
 
 
-inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
 model1 = tf.keras.Sequential([ 
-    inputs,
-    tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
-    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.Input(shape=(imgSize,imgSize,1)),
+    # tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
     tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
     tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
     tf.keras.layers.Dropout(0.25),
@@ -197,9 +196,8 @@ model1 = tf.keras.Sequential([
     tf.keras.layers.Dense(classCount, activation='softmax')
 ])
 
-Train: accuracy: 99.03%
-Test: accuracy: 96.64%
-
+Train best val accuracy model: accuracy: 99.60%
+Test best val accuracy model: accuracy: 96.83%
 
 One letter
 
@@ -252,7 +250,6 @@ model1 = tf.keras.Sequential([
     tf.keras.layers.Dense(256,activation='relu'),
     tf.keras.layers.Dense(classCount, activation='softmax')
 ])
-
 
 Train: accuracy: 99.86%
 Test: accuracy: 98.48%

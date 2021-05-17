@@ -11,7 +11,7 @@ def processImage(img):
     img = img / 255.0
     return img
 
-model1 = tf.keras.models.load_model('model/one_letter/my_model')
+model1 = tf.keras.models.load_model('model/one_letter/Best_points.h5')
 # os.mkdir('wrong')
 
 all_images = 0

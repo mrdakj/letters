@@ -13,6 +13,7 @@ from keras.layers import Dense, Flatten
 from keras.layers.convolutional import Conv1D, MaxPooling1D
 from sklearn.model_selection import train_test_split
 import pathlib
+from sklearn import metrics
 
 imgSize = 28
 classCount = 26
@@ -86,11 +87,10 @@ def configure_for_performance(ds):
 train_ds = configure_for_performance(train_ds)
 val_ds = configure_for_performance(val_ds)
 
-inputs = tf.keras.Input(shape=(imgSize,imgSize,1))
 model1 = tf.keras.Sequential([ 
-    inputs,
+    tf.keras.Input(shape=(imgSize,imgSize,1)),
     # tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
-    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu',input_shape=(imgSize,imgSize,1)),
+    tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
     tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
     tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
     tf.keras.layers.Dropout(0.25),
@@ -106,8 +106,6 @@ model1 = tf.keras.Sequential([
 
 model1.compile(optimizer='rmsprop',loss='categorical_crossentropy',metrics=['accuracy'])
 
-# model1 = tf.keras.models.load_model('model/one_letter/my_model')
- 
 MCP = ModelCheckpoint('model/one_letter/Best_points.h5',verbose=1,save_best_only=True,monitor='val_accuracy',mode='max')
 ES = EarlyStopping(monitor='val_accuracy',min_delta=0,verbose=0,restore_best_weights = True,patience=5,mode='max')
 RLP = ReduceLROnPlateau(monitor='val_loss',patience=5,factor=0.2,min_lr=0.0001)
@@ -118,16 +116,7 @@ history = model1.fit(
         epochs=10,
         callbacks=[MCP,ES,RLP])
 
-# evaluate the model
-scores = model1.evaluate(train_ds)
-print("Train: %s: %.2f%%" % (model1.metrics_names[1], scores[1]*100))
-scores = model1.evaluate(val_ds)
-print("Test: %s: %.2f%%" % (model1.metrics_names[1], scores[1]*100))
-
-model1.save("model/one_letter/my_model")
-# model1.save("model/one_letter/my_model2")
-
-
+# save graph of accuracy and loss
 epochs = history.epoch
 loss = history.history['loss']
 validation_loss = history.history['val_loss']
@@ -151,3 +140,23 @@ plt.plot(epochs, acc, c='red', label='training')
 plt.plot(epochs, validation_acc, c='orange', label='validation')
 plt.legend(loc='best')
 plt.savefig('one_letter_acc.png')
+
+# model1.save("model/one_letter/my_model")
+
+# load model with best val accuracy
+# evaluate the model
+model1 = tf.keras.models.load_model('model/one_letter/Best_points.h5')
+
+scores = model1.evaluate(train_ds)
+print("Train best val accuracy model: %s: %.2f%%" % (model1.metrics_names[1], scores[1]*100))
+scores = model1.evaluate(val_ds)
+print("Test best val accuracy model: %s: %.2f%%" % (model1.metrics_names[1], scores[1]*100))
+
+class_names = np.array(class_names)
+val_labels=[]
+val_predicted=[]
+for x, y in val_ds:
+    val_predicted.extend(class_names[model1.predict(x).argmax(axis=1)])
+    val_labels.extend(class_names[y.numpy().argmax(axis=1)])
+print(metrics.confusion_matrix(val_labels, val_predicted, labels=class_names))
+print(metrics.classification_report(val_labels, val_predicted, labels=class_names))
