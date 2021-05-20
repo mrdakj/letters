@@ -1,0 +1,6 @@
+1000 images per letter
+
+a 97.7
+b 98.6
+c 98.2
+f 98.9
