@@ -10,11 +10,11 @@ namespace fs = std::filesystem;
 
 enum class weight { normal, medium, bold }; 
 
-fs::path get_dir(weight w)
+fs::path get_dir(weight w, const std::string& mode)
 {
-    return  (w == weight::normal) ? "../../dataset/train/one_letter/normal" :
-            (w == weight::medium) ? "../../dataset/train/one_letter/medium" :
-                                    "../../dataset/train/one_letter/bold";
+    return  (w == weight::normal) ? "../../dataset/" + mode + "/one_letter/normal" :
+            (w == weight::medium) ? "../../dataset/" + mode + "/one_letter/medium" :
+                                    "../../dataset/" + mode + "/one_letter/bold";
 }
 
 int letter_index(char letter)
@@ -315,19 +315,6 @@ std::optional<image> merge(const image& img_a, const image& img_b, char label_a,
     return std::nullopt;
 }
 
-bool empty(const image& img)
-{
-    for (int j = 0; j < img.rows(); ++j) {
-        for (int i = 0; i < img.cols(); ++i) {
-            if (img.check_color({j,i}, Color::black)) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
 void prepare(image& img)
 {
     img.resize(28,28);
@@ -350,8 +337,10 @@ std::vector<int> number_of_files(const fs::path& path)
     return result;
 }
 
-void create_data(char a, const fs::path& dir, const fs::path& out_dir, int& current_count)
+void create_data(char a, const fs::path& dir, int& current_count, const std::string& mode, const std::string& position)
 {
+    fs::path out_dir("../../dataset/" + mode + "/two_letters_combined/" + position);
+
     auto letter_count = number_of_files(dir);
     std::vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
@@ -359,16 +348,6 @@ void create_data(char a, const fs::path& dir, const fs::path& out_dir, int& curr
     {
         fs::path direcotry_a = dir;
         fs::path direcotry_b = dir;
-        // int rotated_a = random(0,1);
-        // if (rotated_a) {
-        //     direcotry_a = fs::path(direcotry_a.string() + "_rotated");
-        // }
-        // int rotated_b = random(0,1);
-        // if (rotated_b) {
-        //     direcotry_b = fs::path(direcotry_b.string() + "_rotated");
-        // }
-        // int limit_a = (rotated_a) ? 2*letter_count[a-97] : letter_count[a-97];
-        // int limit_b = (rotated_b) ? 2*letter_count[b-97] : letter_count[b-97];
         int limit_a =  letter_count[a-97];
         int limit_b =  letter_count[b-97];
 
@@ -387,11 +366,13 @@ void create_data(char a, const fs::path& dir, const fs::path& out_dir, int& curr
         return merge(img_a, img_b, a, b);
     };
 
+    int n = (mode == "train") ? 200 : 40;
+
     for (char b : letters) {
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < n; i++) {
             std::optional<image> merged = std::nullopt;
             do {
-                merged = generate_pair(a, b);
+                merged = (position == "first") ? generate_pair(a, b) : generate_pair(b, a);
                 if (merged) {
                     prepare(*merged);
                     (*merged).save(out_dir / str(a) / (std::to_string(current_count) + ".png"));
@@ -402,62 +383,80 @@ void create_data(char a, const fs::path& dir, const fs::path& out_dir, int& curr
     }
 }
 
-void create_data(char a)
+void create_data(char a, const std::string& mode, const std::string& position)
 {
-    fs::path out_dir("../../dataset/train/two_letters_combined/first");
     int current_count = 1;
-    create_data(a, get_dir(weight::normal), out_dir, current_count);
-    create_data(a, get_dir(weight::medium), out_dir, current_count);
-    create_data(a, get_dir(weight::bold), out_dir, current_count);
+    create_data(a, get_dir(weight::normal, mode), current_count, mode, position);
+    create_data(a, get_dir(weight::medium, mode), current_count, mode, position);
+    create_data(a, get_dir(weight::bold, mode), current_count, mode, position);
     std::cout << "done " << str(a) << std::endl;
 }
 
 
-void create1()
+void create1(const std::string& mode, const std::string& position)
 {
-    create_data('a');
-    create_data('b');
-    create_data('c');
-    create_data('d');
-    create_data('e');
-    create_data('f');
+    create_data('a', mode, position);
+    create_data('b', mode, position);
+    create_data('c', mode, position);
+    create_data('d', mode, position);
+    create_data('e', mode, position);
+    create_data('f', mode, position);
 }
 
-void create2()
+void create2(const std::string& mode, const std::string& position)
 {
-    create_data('g');
-    create_data('h');
-    create_data('i');
-    create_data('j');
-    create_data('k');
-    create_data('l');
-    create_data('m');
+    create_data('g', mode, position);
+    create_data('h', mode, position);
+    create_data('i', mode, position);
+    create_data('j', mode, position);
+    create_data('k', mode, position);
+    create_data('l', mode, position);
+    create_data('m', mode, position);
 }
 
-void create3()
+void create3(const std::string& mode, const std::string& position)
 {
-    create_data('n');
-    create_data('o');
-    create_data('p');
-    create_data('q');
-    create_data('r');
-    create_data('s');
+    create_data('n', mode, position);
+    create_data('o', mode, position);
+    create_data('p', mode, position);
+    create_data('q', mode, position);
+    create_data('r', mode, position);
+    create_data('s', mode, position);
 }
 
-void create4()
+void create4(const std::string& mode, const std::string& position)
 {
-    create_data('t');
-    create_data('u');
-    create_data('v');
-    create_data('w');
-    create_data('x');
-    create_data('y');
-    create_data('z');
+    create_data('t', mode, position);
+    create_data('u', mode, position);
+    create_data('v', mode, position);
+    create_data('w', mode, position);
+    create_data('x', mode, position);
+    create_data('y', mode, position);
+    create_data('z', mode, position);
 }
 
 int main(int argc, char** argv)
 {
-    fs::path out_dir("../../dataset/train/two_letters_combined/first");
+    if (argc != 3) {
+        std::cout << "Usage: ./merge [train,validation] [first,second]" << std::endl;
+        return -1;
+    }
+
+    std::string mode = argv[1];
+    std::string position = argv[2];
+    if (mode != "train" && mode != "validation") {
+        std::cout << "invalid mode" << std::endl;
+        return -1;
+    }
+
+    if (position != "first" && position != "second") {
+        std::cout << "invalid position" << std::endl;
+        return -1;
+    }
+
+    std::cout << mode << " " << position << std::endl;
+
+    fs::path out_dir("../../dataset/" + mode + "/two_letters_combined/" + position);
     fs::create_directories(out_dir);
 
     std::vector<char> letters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
@@ -466,10 +465,10 @@ int main(int argc, char** argv)
     }
 
     std::vector<std::future<void>> threads(4);
-    threads[0] = std::async([&]{ std::invoke(create1); });
-    threads[1] = std::async([&]{ std::invoke(create2); });
-    threads[2] = std::async([&]{ std::invoke(create3); });
-    threads[3] = std::async([&]{ std::invoke(create4); });
+    threads[0] = std::async([&]{ std::invoke(create1, mode, position); });
+    threads[1] = std::async([&]{ std::invoke(create2, mode, position); });
+    threads[2] = std::async([&]{ std::invoke(create3, mode, position); });
+    threads[3] = std::async([&]{ std::invoke(create4, mode, position); });
 
     return 0;
 }

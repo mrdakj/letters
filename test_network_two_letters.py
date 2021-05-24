@@ -12,7 +12,7 @@ def processImage(img):
     img = img / 255.0
     return img
 
-model1 = tf.keras.models.load_model('./model/two_letters/Best_points.h5')
+model1 = tf.keras.models.load_model('./model/two_letters/first/model.h5')
 # os.mkdir('wrong')
 
 def test_letter(letter):

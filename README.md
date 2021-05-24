@@ -34,8 +34,7 @@ letters_recognition
 │   ├── CMakeLists.txt  
 │   └── main.cpp  
 ├── models_results.txt  
-├── network_one_letter.py      
-├── network_two_letters.py     
+├── network.py      
 ├── README.md   
 ├── test_network_one_letter.py  
 └── test_network_two_letters.py  
@@ -44,15 +43,9 @@ letters_recognition
 
 ## Setup and Usage
 
-1. Create model dir
-    ```sh
-    mkdir -p model/one_letter
-    mkdir -p model/two_letters
+1. Download dataset
 
-    ```
-2. Download dataset
-
-3. Create components - generate letter images
+2. Create components - generate letter images
     ```sh
     cd components 
     mkdir build && cd build
@@ -62,7 +55,7 @@ letters_recognition
 
     ```
 
-4. Prepare data - resize and rotate
+3. Prepare data - resize and rotate
     ```sh
     cd one 
     mkdir build && cd build
@@ -72,25 +65,29 @@ letters_recognition
 
     ```
 
-5. Merge two letters
+4. Merge two letters
     ```sh
     cd merge 
     mkdir build && cd build
     cmake .. && cmake --build .
-    ./main
+    ./main train first
+    ./main validation first
+    ./main train second
+    ./main validation second
 
     ```
 
-6. Train networks
+5. Train networks
     ```sh
     # one letter
-    python3 network_one_letter.py 
+    python3 network.py one
     # two letters
-    python3 network_two_letters.py 
+    python3 network.py first
+    python3 network.py second
 
     ```
 
-7. Test networks
+6. Test networks
     ```sh
     # one letter
     python3 test_network_one_letter.py
@@ -106,8 +103,8 @@ letters_recognition
 Training size: 514860  
 Test size: 58677  
 
-Train best val accuracy model: accuracy: 99.85%  
-Test best val accuracy model: accuracy: 98.44% (best so far 98.48)  
+Train best val accuracy model: accuracy: 99.86%   
+Test best val accuracy model: accuracy: 98.48%  
 
 ### Two letters glued together - fst letter recognition  
 
@@ -117,19 +114,19 @@ validation: 40 per image pair, no rotations
 Train size: 405600 (200x26x26x3)  
 Test size: 81120 (40x26x26x3)  
 
-Train best val accuracy model: accuracy: 99.60%  
-Test best val accuracy model: accuracy: 96.83%  
+Train best val accuracy model: accuracy: 99.74%  
+Test best val accuracy model: accuracy: 96.91%  
 
-my handwritting recall   
-a 0.9515116942384484  
-b 0.9741219963031423  
-c 0.9311377245508982  
-d 0.9824198552223371  
-e 0.9654150197628458  
-f 0.9722222222222222  
-g 0.997610513739546   
-h 0.9859943977591037  
-k 0.9914529914529915  
-l 0.9906103286384976  
-m 0.9885452462772051  
-n 0.9769503546099291  
+My handwritings:  
+a 0.9526525955504849  
+b 0.9907578558225508   
+c 0.9116766467065869   
+d 0.983453981385729   
+e 0.9644268774703557   
+f 0.9713804713804713   
+g 0.9904420549581839   
+h 0.9915966386554622   
+k 0.989010989010989    
+l 0.9835680751173709   
+m 0.9908361970217641   
+n 0.9778368794326241   

@@ -196,8 +196,8 @@ model1 = tf.keras.Sequential([
     tf.keras.layers.Dense(classCount, activation='softmax')
 ])
 
-Train best val accuracy model: accuracy: 99.60%
-Test best val accuracy model: accuracy: 96.83%
+Train best val accuracy model: accuracy: 99.74%
+Test best val accuracy model: accuracy: 96.91%
 
 One letter
 
