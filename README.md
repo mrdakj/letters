@@ -130,3 +130,7 @@ k 0.989010989010989
 l 0.9835680751173709   
 m 0.9908361970217641   
 n 0.9778368794326241   
+
+### One vs two letters  
+Train best val accuracy model: accuracy: 99.56%  
+Test best val accuracy model: accuracy: 99.23%  
