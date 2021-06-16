@@ -438,13 +438,13 @@ void create4(const std::string& mode, const std::string& position)
 int main(int argc, char** argv)
 {
     if (argc != 3) {
-        std::cout << "Usage: ./merge [train,validation] [first,second]" << std::endl;
+        std::cout << "Usage: ./merge [train,validation,test] [first,second]" << std::endl;
         return -1;
     }
 
     std::string mode = argv[1];
     std::string position = argv[2];
-    if (mode != "train" && mode != "validation") {
+    if (mode != "train" && mode != "validation" && mode != "test") {
         std::cout << "invalid mode" << std::endl;
         return -1;
     }

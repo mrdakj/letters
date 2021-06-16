@@ -91,7 +91,7 @@ void glue(std::pair<borders,image>& component, std::pair<borders,image>& dot)
 }
 
 
-void bfs(const image& img, char letter, std::vector<int>& image_number, const fs::path& directory, bool rotate, int weight)
+void bfs(const image& img, char letter, std::vector<int>& image_number, const fs::path& directory, bool prepare, int weight)
 {
     std::vector<std::pair<borders,image>> components;
     std::vector<std::pair<borders,image>> dots;
@@ -137,36 +137,39 @@ void bfs(const image& img, char letter, std::vector<int>& image_number, const fs
         }
     }
 
-    for (auto const& component : components) {
-        auto const& im = component.second;
+    for (auto& component : components) {
+        auto& im = component.second;
         if ((letter == 'i' || letter == 'j') && (is_one_component(im) || im.cols() > 100)) {
             continue;
         }
 
-        image im_rotated_15(im);
-        image im_rotated_minus_15(im);
         im.save(directory / std::string(1,letter) / (std::to_string(image_num) + ".png"));
 
-        if (rotate) {
+        if (prepare) {
+            int image_num_prepared = (image_num-1)*3 + 1;
+
+            image im_rotated_15(im);
+            image im_rotated_minus_15(im);
+
+            im.resize(28,28);
+            im.save(directory / "prepared" / std::string(1,letter) / (std::to_string(image_num_prepared) + ".png"));
+
             im_rotated_15.rotate(15);
-            // im_rotated_15.blur(5);
-            // im_rotated_15.threshold(100);
             im_rotated_15.crop();
-            im_rotated_15.save(fs::path(directory.string() + "_rotated") / std::string(1,letter) / (std::to_string(2*image_num-1) + ".png"));
-            // ++image_num;
+            im_rotated_15.resize(28,28);
+            im_rotated_15.save(directory / "prepared" / std::string(1,letter) / (std::to_string(image_num_prepared+1) + ".png"));
+
             im_rotated_minus_15.rotate(-15);
-            // im_rotated_minus_15.blur(5);
-            // im_rotated_minus_15.threshold(100);
             im_rotated_minus_15.crop();
-            im_rotated_minus_15.save(fs::path(directory.string() + "_rotated") / std::string(1,letter) / (std::to_string(2*image_num) + ".png"));
-            // ++image_num;
+            im_rotated_minus_15.resize(28,28);
+            im_rotated_minus_15.save(directory / "prepared" / std::string(1,letter) / (std::to_string(image_num_prepared+2) + ".png"));
         }
 
         ++image_num;
     }
 }
 
-void get_images(const fs::path& input_dir, bool rotate, int weight)
+void get_images(const fs::path& input_dir, bool prepare, int weight)
 {
     std::vector<int> image_number(26,1);
 
@@ -175,14 +178,15 @@ void get_images(const fs::path& input_dir, bool rotate, int weight)
         if (p.path().extension() == ".png") {
             char letter = p.path().filename().string()[0];
             fs::create_directories(output_dir / std::string(1, letter));
-            fs::create_directories(fs::path(output_dir.string() + "_rotated")  / std::string(1, letter));
+            if (prepare) {
+                fs::create_directories(input_dir / "prepared" / std::string(1, letter));
+            }
             auto image_name = p.path().string();
             std::cout << image_name << std::endl;
             image img(image_name);
             img.threshold();
             img.crop();
-            img.save("img.png");
-            bfs(img, letter, image_number, output_dir, rotate, weight);
+            bfs(img, letter, image_number, output_dir, prepare, weight);
         }
     }
 }
@@ -190,22 +194,21 @@ void get_images(const fs::path& input_dir, bool rotate, int weight)
 int main(int argc, char** argv)
 {
     if (argc < 2) {
-        std::cout << "./main path_to_dir [rotate]" << std::endl;
+        std::cout << "./main path_to_dir [prepare]" << std::endl;
         return -1;
     }
 
-    bool rotate = false;
+    bool prepare = false;
     fs::path input_dir(argv[1]);
 
     if (argc == 3) {
-        rotate = std::string(argv[2]) == std::string("rotate");
+        prepare = std::string(argv[2]) == std::string("prepare");
     }
 
-    // get_images(input_dir, false, 3);
     std::vector<std::future<void>> threads(3);
-    threads[0] = std::async([&]{ std::invoke(get_images, input_dir / "normal", rotate, 1); });
-    threads[1] = std::async([&]{ std::invoke(get_images, input_dir / "medium", rotate, 2); });
-    threads[2] = std::async([&]{ std::invoke(get_images, input_dir / "bold", rotate, 3); });
+    threads[0] = std::async([&]{ std::invoke(get_images, input_dir / "normal", prepare, 1); });
+    threads[1] = std::async([&]{ std::invoke(get_images, input_dir / "medium", prepare, 2); });
+    threads[2] = std::async([&]{ std::invoke(get_images, input_dir / "bold", prepare, 3); });
 
     return 0;
 }

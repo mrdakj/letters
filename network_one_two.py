@@ -23,27 +23,40 @@ batch_size = 256
 AUTOTUNE = tf.data.AUTOTUNE
 
 def get_data():
-    list_ds = tf.data.Dataset.list_files(str(pathlib.Path('dataset/train/one')/'*/*'), shuffle=True)
-    list_ds = list_ds.take(len(list_ds)//2)
-    list_ds_two = tf.data.Dataset.list_files(str(pathlib.Path('dataset/train/two_letters_combined/first')/'*/*'), shuffle=True)
-    list_ds_two = list_ds_two.take(len(list_ds_two)//2)
-    list_ds = list_ds.concatenate(list_ds_two)
-    image_count = len(list_ds)
-    list_ds = list_ds.shuffle(image_count, reshuffle_each_iteration=True)
-    train_ds = list_ds.take(image_count)
+    train_dirs = [pathlib.Path('dataset/train/one_letter/normal/prepared'), pathlib.Path('dataset/train/one_letter/medium/prepared'), pathlib.Path('dataset/train/one_letter/bold/prepared'), pathlib.Path('dataset/train/two_letters_combined/first')]
 
-    list_ds2 = tf.data.Dataset.list_files(str(pathlib.Path('dataset/validation/one')/'*/*'), shuffle=True).concatenate(tf.data.Dataset.list_files(str(pathlib.Path('dataset/validation/two_letters_combined/first')/'*/*'), shuffle=True))
-    val_image_count = len(list_ds2)
-    list_ds2 = list_ds2.shuffle(val_image_count, reshuffle_each_iteration=True)
-    val_ds = list_ds2.take(val_image_count)
+    train_ds_list = tf.data.Dataset.list_files(str(train_dirs[0]/'*/*'), shuffle=True)
+    for train_dir in train_dirs[1:]:
+        train_ds_list = train_ds_list.concatenate(tf.data.Dataset.list_files(str(train_dir/'*/*'), shuffle=True))
 
-    return train_ds, val_ds
+    image_count = len(train_ds_list)
+    train_ds_list = train_ds_list.shuffle(image_count, reshuffle_each_iteration=True)
+    train_ds = train_ds_list.take(image_count // 2)
+
+    val_dirs = [pathlib.Path('dataset/validation/one_letter/normal/prepared'), pathlib.Path('dataset/validation/one_letter/medium/prepared'), pathlib.Path('dataset/validation/one_letter/bold/prepared'), pathlib.Path('dataset/validation/two_letters_combined/first')]
+    val_ds_list = tf.data.Dataset.list_files(str(val_dirs[0]/'*/*'), shuffle=True)
+    for val_dir in val_dirs[1:]:
+        val_ds_list = val_ds_list.concatenate(tf.data.Dataset.list_files(str(val_dir/'*/*'), shuffle=True))
+
+    image_count = len(val_ds_list)
+    val_ds_list = val_ds_list.shuffle(image_count, reshuffle_each_iteration=True)
+    val_ds = val_ds_list.take(image_count)
+
+    test_dirs = [pathlib.Path('dataset/test/one_letter/normal/prepared'), pathlib.Path('dataset/test/one_letter/medium/prepared'), pathlib.Path('dataset/test/one_letter/bold/prepared'), pathlib.Path('dataset/test/two_letters_combined/first')]
+    test_ds_list = tf.data.Dataset.list_files(str(test_dirs[0]/'*/*'), shuffle=True)
+    for test_dir in test_dirs[1:]:
+        test_ds_list = test_ds_list.concatenate(tf.data.Dataset.list_files(str(test_dir/'*/*'), shuffle=True))
+
+    image_count = len(test_ds_list)
+    test_ds_list = test_ds_list.shuffle(image_count, reshuffle_each_iteration=True)
+    test_ds = test_ds_list.take(image_count)
+
+    return train_ds, val_ds, test_ds
 
 
 def get_label(file_path):
     parts = tf.strings.split(file_path, os.path.sep)
-    # The second to last is the class-directory
-    one_hot = parts[-3] == ['one', 'first']
+    one_hot = parts[-3] == ['prepared', 'first']
     return one_hot
 
 
@@ -137,26 +150,28 @@ def plot_accuracy_loss(history):
     plt.clf()
 
 
-def print_scores(model, train_ds, val_ds):
+def print_scores(model, train_ds, val_ds, test_ds):
     # evaluate the model
     scores = model.evaluate(train_ds)
-    print("Train best val accuracy model: %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    print("Train accuracy: %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
     scores = model.evaluate(val_ds)
-    print("Test best val accuracy model: %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    print("Validation accuracy: %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    scores = model.evaluate(test_ds)
+    print("Test accuracy: %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
 
-def get_true_predicted_val_labels(model, val_ds):
+def get_true_predicted_labels(model, ds):
     val_labels = []
     val_predicted = []
-    for x, y in val_ds:
+    for x, y in ds:
         val_predicted.extend(class_names[model.predict(x).argmax(axis=1)])
         val_labels.extend(class_names[y.numpy().argmax(axis=1)])
     return val_labels, val_predicted
 
 
-def confusion_matrix(val_labels, val_predicted):
+def confusion_matrix(true_labels, predicted_labels, title):
     # save confusion matrix
-    confusion_matrix = metrics.confusion_matrix(val_labels, val_predicted, labels=class_names)
+    confusion_matrix = metrics.confusion_matrix(true_labels, predicted_labels, labels=class_names)
     print(confusion_matrix)
     plt.figure(figsize=(15,8))
     ax = plt.subplot()
@@ -166,7 +181,7 @@ def confusion_matrix(val_labels, val_predicted):
     ax.set_title('Matrica konfuzije')
     ax.xaxis.set_ticklabels(class_names)
     ax.yaxis.set_ticklabels(class_names, rotation='horizontal')
-    plt.savefig(f'{report_dir}/confusion_matrix.pdf', format='pdf')
+    plt.savefig(f'{report_dir}/{title}.pdf', format='pdf')
     plt.clf()
 
 
@@ -286,12 +301,12 @@ def plot_classification_report(classification_report, title='', cmap='RdBu'):
     heatmap(np.array(plotMat), title, xlabel, ylabel, xticklabels, yticklabels, figure_width, figure_height, correct_orientation, cmap=cmap)
 
 
-def classification_report(val_labels, val_predicted):
+def classification_report(true_labels, predicted_labels, title):
     # save classification report
-    report = metrics.classification_report(val_labels, val_predicted, labels=class_names)
+    report = metrics.classification_report(true_labels, predicted_labels, labels=class_names)
     print(report)
     plot_classification_report(report)
-    plt.savefig(f'{report_dir}/report.pdf', format='pdf')
+    plt.savefig(f'{report_dir}/{title}.pdf', format='pdf')
     plt.clf()
 
 
@@ -302,29 +317,35 @@ def main():
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
 
-    train_ds, val_ds = get_data()
-    print(tf.data.experimental.cardinality(train_ds).numpy())
-    print(tf.data.experimental.cardinality(val_ds).numpy())
+    train_ds, val_ds, test_ds = get_data()
+    print("Train size", tf.data.experimental.cardinality(train_ds).numpy())
+    print("Validation size", tf.data.experimental.cardinality(val_ds).numpy())
+    print("Test size", tf.data.experimental.cardinality(test_ds).numpy())
 
     # set num_parallel_calls so multiple images are loaded/processed in parallel
     train_ds = train_ds.map(process_path, num_parallel_calls=AUTOTUNE)
     val_ds = val_ds.map(process_path, num_parallel_calls=AUTOTUNE)
+    test_ds = test_ds.map(process_path, num_parallel_calls=AUTOTUNE)
 
     train_ds = configure_for_performance(train_ds)
     val_ds = configure_for_performance(val_ds)
+    test_ds = configure_for_performance(test_ds)
 
     model = create_model(len(class_names))
     history = train(model, train_ds, val_ds)
     plot_accuracy_loss(history)
 
-
     # load model with best val accuracy
     model = tf.keras.models.load_model(f'{model_dir}/model.h5')
-    print_scores(model, train_ds, val_ds)
+    print_scores(model, train_ds, val_ds, test_ds)
 
-    val_labels, val_predicted = get_true_predicted_val_labels(model, val_ds)
-    confusion_matrix(val_labels, val_predicted)
-    classification_report(val_labels, val_predicted)
+    val_labels, val_predicted = get_true_predicted_labels(model, val_ds)
+    confusion_matrix(val_labels, val_predicted, 'confusion_matrix_val')
+    classification_report(val_labels, val_predicted, 'report_val')
+
+    test_labels, test_predicted = get_true_predicted_labels(model, test_ds)
+    confusion_matrix(test_labels, test_predicted, 'confusion_matrix_test')
+    classification_report(test_labels, test_predicted, 'report_test')
 
 
 if __name__ == "__main__":

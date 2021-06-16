@@ -6,7 +6,7 @@ For trainging with GPU (Manjaro): cuda, python-cuda, python-pycuda, cudnn, tenso
 ## Structure
 
 ```
-letters_recognition  
+letters
 ├── components  
 │   ├── CMakeLists.txt  
 │   └── main.cpp  
@@ -15,8 +15,13 @@ letters_recognition
 │   │   └── one_letter  
 │   │       ├── bold  
 │   │       ├── medium  
+│   │       └── normal 
+│   ├── validation  
+│   │   └── one_letter  
+│   │       ├── bold  
+│   │       ├── medium  
 │   │       └── normal  
-│   └── validation  
+│   └── test  
 │       └── one_letter  
 │           ├── bold  
 │           ├── medium  
@@ -30,14 +35,31 @@ letters_recognition
 ├── model   
 │   ├── one_letter  
 │   └── two_letters  
-├── one   
-│   ├── CMakeLists.txt  
-│   └── main.cpp  
-├── models_results.txt  
-├── network.py      
-├── README.md   
-├── test_network_one_letter.py  
-└── test_network_two_letters.py  
+├── report  
+│   ├── one_letter  
+│   │   ├── accuracy.pdf  
+│   │   ├── confusion_matrix.pdf  
+│   │   ├── loss.pdf  
+│   │   └── report.pdf  
+│   ├── one_two  
+│   │   ├── accuracy.pdf  
+│   │   ├── confusion_matrix.pdf  
+│   │   ├── loss.pdf  
+│   │   └── report.pdf  
+│   └── two_letters  
+│       ├── first  
+│       │   ├── accuracy.pdf  
+│       │   ├── confusion_matrix.pdf  
+│       │   ├── loss.pdf  
+│       │   └── report.pdf  
+│       └── second  
+│           ├── accuracy.pdf  
+│           ├── confusion_matrix.pdf  
+│           ├── loss.pdf  
+│           └── report.pdf  
+├── network.py  
+├── network_one_two.py  
+└── README.md   
 
 ```
 
@@ -50,49 +72,33 @@ letters_recognition
     cd components 
     mkdir build && cd build
     cmake .. && cmake --build .
-    ./main ../../dataset/train/one_letter rotate  
-    ./main ../../dataset/validation/one_letter rotate  
+    ./main ../../dataset/train/one_letter prepare
+    ./main ../../dataset/validation/one_letter prepare
+    ./main ../../dataset/test/one_letter prepare
 
     ```
 
-3. Prepare data - resize and rotate
-    ```sh
-    cd one 
-    mkdir build && cd build
-    cmake .. && cmake --build .
-    ./main train
-    ./main validation
-
-    ```
-
-4. Merge two letters
+3. Merge two letters
     ```sh
     cd merge 
     mkdir build && cd build
     cmake .. && cmake --build .
     ./main train first
     ./main validation first
+    ./main test first
     ./main train second
     ./main validation second
+    ./main test second
 
     ```
 
-5. Train networks
+4. Train networks
     ```sh
     # one letter
     python3 network.py one
     # two letters
     python3 network.py first
     python3 network.py second
-
-    ```
-
-6. Test networks
-    ```sh
-    # one letter
-    python3 test_network_one_letter.py
-    # two letters
-    python3 test_network_two_letters.py 
 
     ```
 
