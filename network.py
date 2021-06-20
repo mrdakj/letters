@@ -2,14 +2,13 @@ import sys
 import os
 import pathlib
 import numpy as np
+from matplotlib import pyplot as plt
 
 import tensorflow as tf
 
 from model import Model
 
 mode = 'one_letter'
-model_dir = ''
-report_dir = ''
 position = ''
 class_names = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])
 img_size = 28
@@ -91,8 +90,18 @@ def configure_for_performance(ds):
     ds = ds.prefetch(buffer_size=AUTOTUNE)
     return ds
 
+def analyze_dataset(ds, report_dir, title):
+    ds_letters = list(ds.map(lambda file_path: tf.strings.split(file_path, os.path.sep)[-2], num_parallel_calls=AUTOTUNE))
+    ds_letters_indexes = list(map(lambda x: ord(x.numpy().decode("utf-8")) - 97, ds_letters))
+    bincounts = np.bincount(ds_letters_indexes)
+    plt.title(f'Velicina skupa: {np.sum(bincounts)}')
+    plt.bar(class_names, bincounts)
+    plt.savefig(f'{report_dir}/{title}.pdf', format='pdf')
+    plt.clf()
+
+
 def main():
-    global mode, model_dir, report_dir, position
+    global mode, position
 
     if len(sys.argv) != 2:
         sys.exit('Usage: network.py [one, first, second]')
@@ -115,6 +124,11 @@ def main():
         os.makedirs(report_dir)
 
     train_ds, val_ds, test_ds = get_data()
+    print('data read')
+    analyze_dataset(train_ds, report_dir, 'trening_podaci')
+    analyze_dataset(val_ds, report_dir, 'validacioni_podaci')
+    analyze_dataset(test_ds, report_dir, 'test_podaci')
+
     print("Train size", tf.data.experimental.cardinality(train_ds).numpy())
     print("Validation size", tf.data.experimental.cardinality(val_ds).numpy())
     print("Test size", tf.data.experimental.cardinality(test_ds).numpy())

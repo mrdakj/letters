@@ -81,12 +81,16 @@ class Model:
 
     def print_scores(self, train_ds, val_ds, test_ds):
         # evaluate the model
-        scores = self.model.evaluate(train_ds)
-        print("Train accuracy: %s: %.2f%%" % (self.model.metrics_names[1], scores[1]*100))
-        scores = self.model.evaluate(val_ds)
-        print("Validation accuracy: %s: %.2f%%" % (self.model.metrics_names[1], scores[1]*100))
-        scores = self.model.evaluate(test_ds)
-        print("Test accuracy: %s: %.2f%%" % (self.model.metrics_names[1], scores[1]*100))
+        train_scores = self.model.evaluate(train_ds)
+        print("Train accuracy: %s: %.2f%%" % (self.model.metrics_names[1], train_scores[1]*100))
+        val_scores = self.model.evaluate(val_ds)
+        print("Validation accuracy: %s: %.2f%%" % (self.model.metrics_names[1], val_scores[1]*100))
+        test_scores = self.model.evaluate(test_ds)
+        print("Test accuracy: %s: %.2f%%" % (self.model.metrics_names[1], test_scores[1]*100))
+        with open(f'{self.report_dir}/scores.txt', 'w') as f:
+            f.write("Train accuracy: %s: %.2f%%\n" % (self.model.metrics_names[1], train_scores[1]*100))
+            f.write("Validation accuracy: %s: %.2f%%\n" % (self.model.metrics_names[1], val_scores[1]*100))
+            f.write("Test accuracy: %s: %.2f%%\n" % (self.model.metrics_names[1], test_scores[1]*100))
 
     def __get_true_predicted_labels(self, ds):
         val_labels = []

@@ -6,10 +6,8 @@ import tensorflow as tf
 
 from model import Model
 
-model_dir =  'model/one_two'
-report_dir = 'report/one_two'
-class_names = np.array(['one', 'two'])
-img_size = 28
+from matplotlib import pyplot as plt
+
 batch_size = 256
 
 AUTOTUNE = tf.data.AUTOTUNE
@@ -79,7 +77,22 @@ def configure_for_performance(ds):
     ds = ds.prefetch(buffer_size=AUTOTUNE)
     return ds
 
+def analyze_dataset(ds, report_dir, title):
+    ds_letters = list(ds.map(lambda file_path: tf.strings.split(file_path, os.path.sep)[-3], num_parallel_calls=AUTOTUNE))
+    ds_letters_indexes = list(map(lambda x: x.numpy().decode("utf-8") == 'first', ds_letters))
+    bincounts = np.bincount(ds_letters_indexes)
+    print(list(zip(['slovo', 'bigram'], bincounts)))
+    plt.title(f'Velicina skupa: {np.sum(bincounts)}')
+    plt.bar(['slovo', 'bigram'], bincounts)
+    plt.savefig(f'{report_dir}/{title}.pdf', format='pdf')
+    plt.clf()
+
 def main():
+    class_names = np.array(['one', 'two'])
+    model_dir =  'model/one_two'
+    report_dir = 'report/one_two'
+    img_size = 28
+
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
 
@@ -87,6 +100,11 @@ def main():
         os.makedirs(report_dir)
 
     train_ds, val_ds, test_ds = get_data()
+    print('data read')
+    analyze_dataset(train_ds, report_dir, 'trening_podaci')
+    analyze_dataset(val_ds, report_dir, 'validacioni_podaci')
+    analyze_dataset(test_ds, report_dir, 'test_podaci')
+
     print("Train size", tf.data.experimental.cardinality(train_ds).numpy())
     print("Validation size", tf.data.experimental.cardinality(val_ds).numpy())
     print("Test size", tf.data.experimental.cardinality(test_ds).numpy())
