@@ -99,6 +99,8 @@ letters
     # two letters
     python3 network.py first
     python3 network.py second
+    # train one vs two network
+    python3 network_one_two.py
 
     ```
 
