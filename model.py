@@ -1,14 +1,16 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+from keras.utils.vis_utils import plot_model
 
 from classification_report import ClassificationReport
 
 
 class Model:
     def __init__(self, img_size, class_names, model_dir, report_dir):
-        self.class_names = class_names
+        self.class_names = class_names if len(class_names) != 2 else np.array(['slovo', 'bigram'])
         self.model_dir = model_dir
         self.report_dir = report_dir
         self.model = self.__create_model(img_size)
@@ -20,11 +22,11 @@ class Model:
             tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
             tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
             tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
-            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dropout(0.25),
             tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
             tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
             tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2)),
-            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dropout(0.25),
             tf.keras.layers.Flatten(),
             tf.keras.layers.Dense(512,activation='relu'),
             tf.keras.layers.Dense(256,activation='relu'),
@@ -33,6 +35,9 @@ class Model:
 
         model.compile(optimizer='rmsprop',loss='categorical_crossentropy',metrics=['accuracy'])
         return model
+
+    def plot(self, path):
+        plot_model(self.model, to_file=path, show_shapes=True, show_layer_names=True)
 
 
     def train(self, train_ds, val_ds):
@@ -53,27 +58,31 @@ class Model:
             loss = self.history.history['loss']
             validation_loss = self.history.history['val_loss']
 
-            plt.title('Gubitak')
-            plt.xlabel('epoha')
-            plt.ylabel('gubitak')
-            plt.xticks(range(len(epochs)), range(1, len(epochs)+1))
+            plt.figure(figsize=(15,8))
+            plt.title('Gubitak', fontsize=30)
+            plt.xlabel('epoha', fontsize=30)
+            plt.ylabel('gubitak', fontsize=30)
+            plt.xticks(range(len(epochs)), range(1, len(epochs)+1), fontsize=30)
+            plt.yticks(fontsize=30)
             plt.plot(epochs, loss, c='red', label='trening')
             plt.plot(epochs, validation_loss, c='orange', label='validacija')
-            plt.legend(loc='best')
-            plt.savefig(f'{self.report_dir}/loss.pdf', format='pdf')
+            plt.legend(loc='best', fontsize=30)
+            plt.savefig(f'{self.report_dir}/loss.pdf', format='pdf', bbox_inches='tight')
             plt.clf()
 
             acc = self.history.history['accuracy']
             validation_acc = self.history.history['val_accuracy']
 
-            plt.title('Tačnost')
-            plt.xlabel('epoha')
-            plt.ylabel('tačnost')
-            plt.xticks(range(len(epochs)), range(1, len(epochs)+1))
+            plt.figure(figsize=(15,8))
+            plt.title('Tačnost', fontsize=30)
+            plt.xlabel('epoha', fontsize=30)
+            plt.ylabel('tačnost', fontsize=30)
+            plt.xticks(range(len(epochs)), range(1, len(epochs)+1), fontsize=30)
+            plt.yticks(fontsize=30)
             plt.plot(epochs, acc, c='red', label='trening')
             plt.plot(epochs, validation_acc, c='orange', label='validacija')
-            plt.legend(loc='best')
-            plt.savefig(f'{self.report_dir}/accuracy.pdf', format='pdf')
+            plt.legend(loc='best', fontsize=30)
+            plt.savefig(f'{self.report_dir}/accuracy.pdf', format='pdf', bbox_inches='tight')
             plt.clf()
 
     def load_best_model(self):

@@ -1,7 +1,7 @@
 ## :package: Installation
 :exclamation: Requirements: OpenCV, Keras, cmake
 
-For trainging with GPU (Manjaro): cuda, python-cuda, python-pycuda, cudnn, tensorflow-cuda, python-tensorflow-cuda
+For trainging with GPU (Manjaro): cuda, python-cuda, python-pycuda, cudnn, tensorflow-cuda, python-tensorflow-cuda, pydot
 
 ## Structure
 

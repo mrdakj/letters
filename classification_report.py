@@ -5,6 +5,7 @@ from sklearn import metrics
 
 class ClassificationReport:
     def __init__(self, class_names, report_dir):
+        sns.set(font_scale=1.4)
         self.class_names = class_names
         self.report_dir = report_dir
 
@@ -12,15 +13,19 @@ class ClassificationReport:
         # save confusion matrix
         confusion_matrix = metrics.confusion_matrix(true_labels, predicted_labels, labels=self.class_names)
         # print(confusion_matrix)
-        plt.figure(figsize=(15,8))
+        if len(self.class_names) == 2:
+            plt.figure(figsize=(9,6))
+        else:
+            plt.figure(figsize=(18,13))
+
         ax = plt.subplot()
         sns.heatmap(confusion_matrix, annot=True, fmt='g', ax=ax)
-        ax.set_xlabel('Prediktovane vrednosti')
-        ax.set_ylabel('Stvarne vrednosti')
-        ax.set_title('Matrica konfuzije')
-        ax.xaxis.set_ticklabels(self.class_names)
-        ax.yaxis.set_ticklabels(self.class_names, rotation='horizontal')
-        plt.savefig(f'{self.report_dir}/{title}.pdf', format='pdf')
+        ax.set_xlabel('Prediktovane vrednosti', fontsize=20)
+        ax.set_ylabel('Stvarne vrednosti', fontsize=20)
+        ax.set_title('Matrica konfuzije', fontsize=20)
+        ax.xaxis.set_ticklabels(self.class_names, fontsize=20)
+        ax.yaxis.set_ticklabels(self.class_names, rotation='horizontal', fontsize=20)
+        plt.savefig(f'{self.report_dir}/{title}.pdf', format='pdf', bbox_inches='tight')
         plt.clf()
 
 
@@ -73,13 +78,13 @@ class ClassificationReport:
 
         # set tick labels
         #ax.set_xticklabels(np.arange(1,AUC.shape[1]+1), minor=False)
-        ax.set_xticklabels(xticklabels, minor=False)
-        ax.set_yticklabels(yticklabels, minor=False)
+        ax.set_xticklabels(xticklabels, minor=False, fontsize=20)
+        ax.set_yticklabels(yticklabels, minor=False, fontsize=20)
 
         # set title and x/y labels
-        plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)      
+        plt.title(title, fontsize=20)
+        plt.xlabel(xlabel, fontsize=20)
+        plt.ylabel(ylabel, fontsize=20)
 
         # Remove last blank column
         plt.xlim( (0, AUC.shape[1]) )
@@ -145,5 +150,5 @@ class ClassificationReport:
         report = metrics.classification_report(true_labels, predicted_labels, labels=self.class_names)
         print(report)
         self.__plot_classification_report(report)
-        plt.savefig(f'{self.report_dir}/{title}.pdf', format='pdf')
+        plt.savefig(f'{self.report_dir}/{title}.pdf', format='pdf', bbox_inches='tight')
         plt.clf()

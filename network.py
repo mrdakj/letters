@@ -94,9 +94,11 @@ def analyze_dataset(ds, report_dir, title):
     ds_letters = list(ds.map(lambda file_path: tf.strings.split(file_path, os.path.sep)[-2], num_parallel_calls=AUTOTUNE))
     ds_letters_indexes = list(map(lambda x: ord(x.numpy().decode("utf-8")) - 97, ds_letters))
     bincounts = np.bincount(ds_letters_indexes)
-    plt.title(f'Velicina skupa: {np.sum(bincounts)}')
+    plt.title(f'Velicina skupa: {np.sum(bincounts)}', fontsize=15)
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
     plt.bar(class_names, bincounts)
-    plt.savefig(f'{report_dir}/{title}.pdf', format='pdf')
+    plt.savefig(f'{report_dir}/{title}.pdf', format='pdf', bbox_inches='tight')
     plt.clf()
 
 
@@ -125,9 +127,9 @@ def main():
 
     train_ds, val_ds, test_ds = get_data()
     print('data read')
-    analyze_dataset(train_ds, report_dir, 'trening_podaci')
-    analyze_dataset(val_ds, report_dir, 'validacioni_podaci')
-    analyze_dataset(test_ds, report_dir, 'test_podaci')
+    analyze_dataset(train_ds, report_dir, 'trening_podaci_raspodela')
+    analyze_dataset(val_ds, report_dir, 'validacioni_podaci_raspodela')
+    analyze_dataset(test_ds, report_dir, 'test_podaci_raspodela')
 
     print("Train size", tf.data.experimental.cardinality(train_ds).numpy())
     print("Validation size", tf.data.experimental.cardinality(val_ds).numpy())
