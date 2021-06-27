@@ -144,7 +144,7 @@ def main():
     val_ds = configure_for_performance(val_ds)
     test_ds = configure_for_performance(test_ds)
 
-    model = Model(img_size, class_names, model_dir, report_dir)
+    model = Model(mode, img_size, class_names, model_dir, report_dir)
     model.train(train_ds, val_ds)
     model.plot_accuracy_loss()
 

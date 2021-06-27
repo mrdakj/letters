@@ -8,36 +8,40 @@ from model import Model
 
 from matplotlib import pyplot as plt
 
-batch_size = 256
+batch_size = 512
 
 AUTOTUNE = tf.data.AUTOTUNE
 
 def get_data():
-    train_dirs = [pathlib.Path('dataset/train/one_letter/normal/prepared'), pathlib.Path('dataset/train/one_letter/medium/prepared'), pathlib.Path('dataset/train/one_letter/bold/prepared'), pathlib.Path('dataset/train/two_letters_combined/first')]
+    train_dirs = [pathlib.Path('dataset/train/one_letter/normal/prepared'), pathlib.Path('dataset/train/one_letter/medium/prepared'), pathlib.Path('dataset/train/one_letter/bold/prepared')]
 
-    train_ds_list = tf.data.Dataset.list_files(str(train_dirs[0]/'*/*'), shuffle=True)
-    for train_dir in train_dirs[1:]:
-        train_ds_list = train_ds_list.concatenate(tf.data.Dataset.list_files(str(train_dir/'*/*'), shuffle=True))
+    pom_ds_list = tf.data.Dataset.list_files(str(pathlib.Path('dataset/train/two_letters_combined/first/*/*')), shuffle=True)
+    train_ds_list = pom_ds_list.take(300000)
+    for train_dir in train_dirs:
+        pom_ds_list = tf.data.Dataset.list_files(str(train_dir/'*/*'), shuffle=True)
+        train_ds_list = train_ds_list.concatenate(pom_ds_list.take(100000))
 
     image_count = len(train_ds_list)
     train_ds_list = train_ds_list.shuffle(image_count, reshuffle_each_iteration=True)
-    train_ds = train_ds_list.take(image_count // 2)
+    train_ds = train_ds_list.take(image_count)
     # train_ds = train_ds_list.take(100)
 
-    val_dirs = [pathlib.Path('dataset/validation/one_letter/normal/prepared'), pathlib.Path('dataset/validation/one_letter/medium/prepared'), pathlib.Path('dataset/validation/one_letter/bold/prepared'), pathlib.Path('dataset/validation/two_letters_combined/first')]
-    val_ds_list = tf.data.Dataset.list_files(str(val_dirs[0]/'*/*'), shuffle=True)
-    for val_dir in val_dirs[1:]:
-        val_ds_list = val_ds_list.concatenate(tf.data.Dataset.list_files(str(val_dir/'*/*'), shuffle=True))
+    val_dirs = [pathlib.Path('dataset/validation/one_letter/normal/prepared'), pathlib.Path('dataset/validation/one_letter/medium/prepared'), pathlib.Path('dataset/validation/one_letter/bold/prepared')]
+    pom_ds_list = tf.data.Dataset.list_files(str(pathlib.Path('dataset/validation/two_letters_combined/first/*/*')), shuffle=True)
+    val_ds_list = pom_ds_list.take(57000)
+    for val_dir in val_dirs:
+        val_ds_list = val_ds_list.concatenate(tf.data.Dataset.list_files(str(val_dir/'*/*'), shuffle=True).take(19000))
 
     image_count = len(val_ds_list)
     val_ds_list = val_ds_list.shuffle(image_count, reshuffle_each_iteration=True)
     val_ds = val_ds_list.take(image_count)
     # val_ds = val_ds_list.take(100)
 
-    test_dirs = [pathlib.Path('dataset/test/one_letter/normal/prepared'), pathlib.Path('dataset/test/one_letter/medium/prepared'), pathlib.Path('dataset/test/one_letter/bold/prepared'), pathlib.Path('dataset/test/two_letters_combined/first')]
-    test_ds_list = tf.data.Dataset.list_files(str(test_dirs[0]/'*/*'), shuffle=True)
-    for test_dir in test_dirs[1:]:
-        test_ds_list = test_ds_list.concatenate(tf.data.Dataset.list_files(str(test_dir/'*/*'), shuffle=True))
+    test_dirs = [pathlib.Path('dataset/test/one_letter/normal/prepared'), pathlib.Path('dataset/test/one_letter/medium/prepared'), pathlib.Path('dataset/test/one_letter/bold/prepared')]
+    pom_ds_list = tf.data.Dataset.list_files(str(pathlib.Path('dataset/test/two_letters_combined/first/*/*')), shuffle=True)
+    test_ds_list = pom_ds_list.take(57000)
+    for test_dir in test_dirs:
+        test_ds_list = test_ds_list.concatenate(tf.data.Dataset.list_files(str(test_dir/'*/*'), shuffle=True).take(19000))
 
     image_count = len(test_ds_list)
     test_ds_list = test_ds_list.shuffle(image_count, reshuffle_each_iteration=True)
@@ -120,7 +124,7 @@ def main():
     val_ds = configure_for_performance(val_ds)
     test_ds = configure_for_performance(test_ds)
 
-    model = Model(img_size, class_names, model_dir, report_dir)
+    model = Model('one_two', img_size, class_names, model_dir, report_dir)
     model.plot('model.pdf')
     model.train(train_ds, val_ds)
     model.plot_accuracy_loss()

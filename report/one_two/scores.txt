@@ -1,7 +1,3 @@
-Train size 460146
-Validation size 139797
-Test size 144303
-
-Train accuracy: accuracy: 98.76%
-Validation accuracy: accuracy: 99.14%
-Test accuracy: accuracy: 99.31%
+Train accuracy: accuracy: 98.71%
+Validation accuracy: accuracy: 99.06%
+Test accuracy: accuracy: 99.04%

@@ -9,31 +9,31 @@ from classification_report import ClassificationReport
 
 
 class Model:
-    def __init__(self, img_size, class_names, model_dir, report_dir):
-        self.class_names = class_names if len(class_names) != 2 else np.array(['slovo', 'bigram'])
+    def __init__(self, network_name, img_size, class_names, model_dir, report_dir):
+        self.class_names = class_names if network_name != 'one_two' else np.array(['slovo', 'bigram'])
         self.model_dir = model_dir
         self.report_dir = report_dir
-        self.model = self.__create_model(img_size)
+        self.model = self.__create_model(network_name, img_size)
         self.history = None
 
-    def __create_model(self, img_size):
+    def __create_model(self, network_name, img_size):
         model = tf.keras.Sequential([ 
             tf.keras.Input(shape=(img_size,img_size,1)),
             tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
             tf.keras.layers.Conv2D(filters = 32, kernel_size = (5,5),padding = 'Same', activation ='relu'),
             tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
-            tf.keras.layers.Dropout(0.25),
+            tf.keras.layers.Dropout(0.5 if network_name != 'one_two' else 0.25),
             tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
             tf.keras.layers.Conv2D(filters = 64, kernel_size = (3,3),padding = 'Same', activation ='relu'),
             tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2)),
-            tf.keras.layers.Dropout(0.25),
+            tf.keras.layers.Dropout(0.5 if network_name != 'one_two' else 0.25),
             tf.keras.layers.Flatten(),
             tf.keras.layers.Dense(512,activation='relu'),
             tf.keras.layers.Dense(256,activation='relu'),
-            tf.keras.layers.Dense(len(self.class_names), activation='softmax')
+            tf.keras.layers.Dense(len(self.class_names), activation='softmax' if network_name != 'one_two' else 'sigmoid')
         ])
 
-        model.compile(optimizer='rmsprop',loss='categorical_crossentropy',metrics=['accuracy'])
+        model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.0001), loss='categorical_crossentropy' if network_name != 'one_two' else 'binary_crossentropy', metrics=['accuracy'])
         return model
 
     def plot(self, path):
@@ -91,15 +91,15 @@ class Model:
     def print_scores(self, train_ds, val_ds, test_ds):
         # evaluate the model
         train_scores = self.model.evaluate(train_ds)
-        print("Train accuracy: %s: %.2f%%" % (self.model.metrics_names[1], train_scores[1]*100))
+        print("Train %s: %.2f%%" % (self.model.metrics_names[1], train_scores[1]*100))
         val_scores = self.model.evaluate(val_ds)
-        print("Validation accuracy: %s: %.2f%%" % (self.model.metrics_names[1], val_scores[1]*100))
+        print("Validation %s: %.2f%%" % (self.model.metrics_names[1], val_scores[1]*100))
         test_scores = self.model.evaluate(test_ds)
-        print("Test accuracy: %s: %.2f%%" % (self.model.metrics_names[1], test_scores[1]*100))
+        print("Test %s: %.2f%%" % (self.model.metrics_names[1], test_scores[1]*100))
         with open(f'{self.report_dir}/scores.txt', 'w') as f:
-            f.write("Train accuracy: %s: %.2f%%\n" % (self.model.metrics_names[1], train_scores[1]*100))
-            f.write("Validation accuracy: %s: %.2f%%\n" % (self.model.metrics_names[1], val_scores[1]*100))
-            f.write("Test accuracy: %s: %.2f%%\n" % (self.model.metrics_names[1], test_scores[1]*100))
+            f.write("Train %s: %.2f%%\n" % (self.model.metrics_names[1], train_scores[1]*100))
+            f.write("Validation %s: %.2f%%\n" % (self.model.metrics_names[1], val_scores[1]*100))
+            f.write("Test %s: %.2f%%\n" % (self.model.metrics_names[1], test_scores[1]*100))
 
     def __get_true_predicted_labels(self, ds):
         val_labels = []
