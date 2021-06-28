@@ -28,9 +28,9 @@ def get_data():
 
     val_dirs = [pathlib.Path('dataset/validation/one_letter/normal/prepared'), pathlib.Path('dataset/validation/one_letter/medium/prepared'), pathlib.Path('dataset/validation/one_letter/bold/prepared')]
     pom_ds_list = tf.data.Dataset.list_files(str(pathlib.Path('dataset/validation/two_letters_combined/first/*/*')), shuffle=True)
-    val_ds_list = pom_ds_list.take(57000)
+    val_ds_list = pom_ds_list.take(60000)
     for val_dir in val_dirs:
-        val_ds_list = val_ds_list.concatenate(tf.data.Dataset.list_files(str(val_dir/'*/*'), shuffle=True).take(19000))
+        val_ds_list = val_ds_list.concatenate(tf.data.Dataset.list_files(str(val_dir/'*/*'), shuffle=True).take(20000))
 
     image_count = len(val_ds_list)
     val_ds_list = val_ds_list.shuffle(image_count, reshuffle_each_iteration=True)

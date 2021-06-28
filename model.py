@@ -33,7 +33,7 @@ class Model:
             tf.keras.layers.Dense(len(self.class_names), activation='softmax' if network_name != 'one_two' else 'sigmoid')
         ])
 
-        model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.0001), loss='categorical_crossentropy' if network_name != 'one_two' else 'binary_crossentropy', metrics=['accuracy'])
+        model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.0001 if network_name != 'two_letters' else 0.001), loss='categorical_crossentropy' if network_name != 'one_two' else 'binary_crossentropy', metrics=['accuracy'])
         return model
 
     def plot(self, path):
