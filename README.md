@@ -1,3 +1,5 @@
+Team: Jelena Mrdak  
+
 ## :package: Installation
 :exclamation: Requirements: OpenCV, Keras, cmake
 
@@ -26,6 +28,26 @@ letters
 │           ├── bold  
 │           ├── medium  
 │           └── normal  
+├── dcgan  
+├── demo  
+│   ├── one_letter  
+│   │   ├── pogresno_prediktovana_slova.pdf  
+│   │   ├── test_podaci_random_25.pdf  
+│   │   └── trening_podaci.pdf  
+│   ├── one_two  
+│   │   ├── pogresno_prediktovana_slova.pdf  
+│   │   ├── test_podaci_random_25.pdf  
+│   │   └── trening_podaci.pdf  
+│   ├── two_letters  
+│   │   ├── first  
+│   │   │   ├── pogresno_prediktovana_slova.pdf  
+│   │   │   ├── test_podaci_random_25.pdf  
+│   │   │   └── trening_podaci.pdf  
+│   │   └── second  
+│   │       ├── pogresno_prediktovana_slova.pdf  
+│   │       ├── test_podaci_random_25.pdf  
+│   │       └── trening_podaci.pdf  
+│   └── demo.ipynb  
 ├── include  
 │   ├── image.cpp  
 │   └── image.h   
@@ -34,7 +56,14 @@ letters
 │   └── main.cpp  
 ├── model   
 │   ├── one_letter  
+│   │   └── model.h5  
+│   ├── one_two  
+│   │   └── model.h5  
 │   └── two_letters  
+│       ├── first  
+│       │   └── model.h5  
+│       └── second  
+│           └── model.h5  
 ├── report  
 │   ├── one_letter  
 │   │   ├── accuracy.pdf  
@@ -57,6 +86,9 @@ letters
 │           ├── confusion_matrix.pdf  
 │           ├── loss.pdf  
 │           └── report.pdf  
+├── classification_report.py  
+├── model.pdf  
+├── model.py  
 ├── network.py  
 ├── network_one_two.py  
 └── README.md   
@@ -104,41 +136,3 @@ letters
 
     ```
 
-## Results
-
-### One letter
-
-Training size: 514860  
-Test size: 58677  
-
-Train best val accuracy model: accuracy: 99.86%   
-Test best val accuracy model: accuracy: 98.48%  
-
-### Two letters glued together - fst letter recognition  
-
-training: 200 per image pair, no rotations  
-validation: 40 per image pair, no rotations  
-
-Train size: 405600 (200x26x26x3)  
-Test size: 81120 (40x26x26x3)  
-
-Train best val accuracy model: accuracy: 99.74%  
-Test best val accuracy model: accuracy: 96.91%  
-
-My handwritings:  
-a 0.9526525955504849  
-b 0.9907578558225508   
-c 0.9116766467065869   
-d 0.983453981385729   
-e 0.9644268774703557   
-f 0.9713804713804713   
-g 0.9904420549581839   
-h 0.9915966386554622   
-k 0.989010989010989    
-l 0.9835680751173709   
-m 0.9908361970217641   
-n 0.9778368794326241   
-
-### One vs two letters  
-Train best val accuracy model: accuracy: 99.56%  
-Test best val accuracy model: accuracy: 99.23%  
