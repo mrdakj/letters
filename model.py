@@ -33,7 +33,7 @@ class Model:
             tf.keras.layers.Dense(len(self.class_names), activation='softmax' if network_name != 'one_two' else 'sigmoid')
         ])
 
-        model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.0001 if network_name != 'two_letters' else 0.001), loss='categorical_crossentropy' if network_name != 'one_two' else 'binary_crossentropy', metrics=['accuracy'])
+        model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.0001), loss='categorical_crossentropy' if network_name != 'one_two' else 'binary_crossentropy', metrics=['accuracy'])
         return model
 
     def plot(self, path):
@@ -48,7 +48,7 @@ class Model:
         self.history = self.model.fit(
                 train_ds,
                 validation_data=val_ds,
-                epochs=10,
+                epochs=30,
                 callbacks=[MCP,ES,RLP])
 
     def plot_accuracy_loss(self):
@@ -62,7 +62,7 @@ class Model:
             plt.title('Gubitak', fontsize=30)
             plt.xlabel('epoha', fontsize=30)
             plt.ylabel('gubitak', fontsize=30)
-            plt.xticks(range(len(epochs)), range(1, len(epochs)+1), fontsize=30)
+            plt.xticks(range(1, len(epochs)+1, 2), fontsize=30)
             plt.yticks(fontsize=30)
             plt.plot(epochs, loss, c='red', label='trening')
             plt.plot(epochs, validation_loss, c='orange', label='validacija')
@@ -77,7 +77,7 @@ class Model:
             plt.title('Tačnost', fontsize=30)
             plt.xlabel('epoha', fontsize=30)
             plt.ylabel('tačnost', fontsize=30)
-            plt.xticks(range(len(epochs)), range(1, len(epochs)+1), fontsize=30)
+            plt.xticks(range(1, len(epochs)+1, 2), fontsize=30)
             plt.yticks(fontsize=30)
             plt.plot(epochs, acc, c='red', label='trening')
             plt.plot(epochs, validation_acc, c='orange', label='validacija')

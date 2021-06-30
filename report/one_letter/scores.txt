@@ -1,3 +1,3 @@
-Train accuracy: 99.43%
-Validation accuracy: 98.89%
-Test accuracy: 98.04%
+Train accuracy: 99.68%
+Validation accuracy: 99.13%
+Test accuracy: 98.23%
