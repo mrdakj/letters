@@ -82,13 +82,17 @@ def configure_for_performance(ds):
     return ds
 
 def analyze_dataset(ds, report_dir, title):
+    dataset_name = title.split('_')[0]
+    if dataset_name == 'validacioni':
+        dataset_name = 'validacionog'
+
     ds_letters = list(ds.map(lambda file_path: tf.strings.split(file_path, os.path.sep)[-3], num_parallel_calls=AUTOTUNE))
     ds_letters_indexes = list(map(lambda x: x.numpy().decode("utf-8") == 'first', ds_letters))
     bincounts = np.bincount(ds_letters_indexes)
     print(list(zip(['slovo', 'bigram'], bincounts)))
     plt.xticks(fontsize=15)
     plt.yticks(fontsize=15)
-    plt.title(f'Velicina skupa: {np.sum(bincounts)}', fontsize=15)
+    plt.title(f'Velicina {dataset_name} skupa: {np.sum(bincounts)}', fontsize=15)
     plt.bar(['slovo', 'bigram'], bincounts)
     plt.savefig(f'{report_dir}/{title}.pdf', format='pdf', bbox_inches='tight')
     plt.clf()

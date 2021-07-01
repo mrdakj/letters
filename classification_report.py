@@ -12,19 +12,20 @@ class ClassificationReport:
     def confusion_matrix(self, true_labels, predicted_labels, title):
         # save confusion matrix
         confusion_matrix = metrics.confusion_matrix(true_labels, predicted_labels, labels=self.class_names)
-        # print(confusion_matrix)
+        font_size = 20 if len(self.class_names) == 2 else 35
+
         if len(self.class_names) == 2:
             plt.figure(figsize=(9,6))
         else:
-            plt.figure(figsize=(18,13))
+            plt.figure(figsize=(27,20))
 
         ax = plt.subplot()
         sns.heatmap(confusion_matrix, annot=True, fmt='g', ax=ax)
-        ax.set_xlabel('Prediktovane vrednosti', fontsize=20)
-        ax.set_ylabel('Stvarne vrednosti', fontsize=20)
-        ax.set_title('Matrica konfuzije', fontsize=20)
-        ax.xaxis.set_ticklabels(self.class_names, fontsize=20)
-        ax.yaxis.set_ticklabels(self.class_names, rotation='horizontal', fontsize=20)
+        ax.set_xlabel('Prediktovane vrednosti', fontsize=font_size)
+        ax.set_ylabel('Stvarne vrednosti', fontsize=font_size)
+        ax.set_title('Matrica konfuzije', fontsize=font_size)
+        ax.xaxis.set_ticklabels(self.class_names, fontsize=font_size)
+        ax.yaxis.set_ticklabels(self.class_names, rotation='horizontal', fontsize=font_size)
         plt.savefig(f'{self.report_dir}/{title}.pdf', format='pdf', bbox_inches='tight')
         plt.clf()
 
@@ -70,7 +71,7 @@ class ClassificationReport:
         # Plot it out
         fig, ax = plt.subplots()    
         #c = ax.pcolor(AUC, edgecolors='k', linestyle= 'dashed', linewidths=0.2, cmap='RdBu', vmin=0.0, vmax=1.0)
-        c = ax.pcolor(AUC, edgecolors='k', linestyle= 'dashed', linewidths=0.2, cmap=cmap)
+        c = ax.pcolor(AUC, edgecolors='k', linestyle= 'dashed', linewidths=0.2, cmap=cmap, vmin=0.85, vmax=1.0)
 
         # put the major ticks at the middle of each cell
         ax.set_yticks(np.arange(AUC.shape[0]) + 0.5, minor=False)
