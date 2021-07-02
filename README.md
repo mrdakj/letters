@@ -9,10 +9,10 @@ For trainging with GPU (Manjaro): cuda, python-cuda, python-pycuda, cudnn, tenso
 
 ```
 letters
-├── components  
+├── components                                              <---  create n smaller images of a letter from the bigger image with n letters  
 │   ├── CMakeLists.txt  
 │   └── main.cpp  
-├── dataset  
+├── dataset                                                 <---  dataset containing letters of english alphabet  
 │   ├── train  
 │   │   └── one_letter  
 │   │       ├── bold  
@@ -28,8 +28,10 @@ letters
 │           ├── bold  
 │           ├── medium  
 │           └── normal  
-├── dcgan  
-├── demo  
+├── dcgan                                                   <---  network for generating new letters based on dataset  
+│   ├── report  
+│   └── dcgan.py  
+├── demo                                                    <---  jupyther notebook used to demonstrate models  
 │   ├── one_letter  
 │   │   ├── pogresno_prediktovana_slova.pdf  
 │   │   ├── test_podaci_random_25.pdf  
@@ -48,13 +50,13 @@ letters
 │   │       ├── test_podaci_random_25.pdf  
 │   │       └── trening_podaci.pdf  
 │   └── demo.ipynb  
-├── include  
+├── include                                                <---  helper class for image manipulation  
 │   ├── image.cpp  
 │   └── image.h   
-├── merge  
+├── merge                                                  <---  used to generate dataset for bigrams  
 │   ├── CMakeLists.txt  
 │   └── main.cpp  
-├── model   
+├── model                                                  <---  trained models for letters recognition  
 │   ├── one_letter  
 │   │   └── model.h5  
 │   ├── one_two  
@@ -64,34 +66,59 @@ letters
 │       │   └── model.h5  
 │       └── second  
 │           └── model.h5  
-├── report  
+├── report                                                 <---  model reports (data distribution, curves, scores, classification reports, confusion matrix)  
 │   ├── one_letter  
 │   │   ├── accuracy.pdf  
-│   │   ├── confusion_matrix.pdf  
+│   │   ├── confusion_matrix_test.pdf  
+│   │   ├── confusion_matrix_val.pdf  
 │   │   ├── loss.pdf  
-│   │   └── report.pdf  
+│   │   ├── report_test.pdf  
+│   │   ├── report_val.pdf  
+│   │   ├── scores.txt  
+│   │   ├── test_podaci_raspodela.pdf  
+│   │   ├── trening_podaci_raspodela.pdf  
+│   │   └── validacioni_podaci_raspodela.pdf  
 │   ├── one_two  
 │   │   ├── accuracy.pdf  
-│   │   ├── confusion_matrix.pdf  
+│   │   ├── confusion_matrix_test.pdf  
+│   │   ├── confusion_matrix_val.pdf  
 │   │   ├── loss.pdf  
-│   │   └── report.pdf  
+│   │   ├── report_test.pdf  
+│   │   ├── report_val.pdf  
+│   │   ├── scores.txt  
+│   │   ├── test_podaci_raspodela.pdf  
+│   │   ├── trening_podaci_raspodela.pdf  
+│   │   └── validacioni_podaci_raspodela.pdf  
 │   └── two_letters  
 │       ├── first  
 │       │   ├── accuracy.pdf  
-│       │   ├── confusion_matrix.pdf  
+│       │   ├── confusion_matrix_test.pdf  
+│       │   ├── confusion_matrix_val.pdf  
 │       │   ├── loss.pdf  
-│       │   └── report.pdf  
+│       │   ├── report_test.pdf  
+│       │   ├── report_val.pdf  
+│       │   ├── scores.txt  
+│       │   ├── test_podaci_raspodela.pdf  
+│       │   ├── trening_podaci_raspodela.pdf  
+│       │   └── validacioni_podaci_raspodela.pdf  
 │       └── second  
 │           ├── accuracy.pdf  
-│           ├── confusion_matrix.pdf  
+│           ├── confusion_matrix_test.pdf  
+│           ├── confusion_matrix_val.pdf  
 │           ├── loss.pdf  
-│           └── report.pdf  
-├── classification_report.py  
+│           ├── report_test.pdf  
+│           ├── report_val.pdf  
+│           ├── scores.txt  
+│           ├── test_podaci_raspodela.pdf  
+│           ├── trening_podaci_raspodela.pdf  
+│           └── validacioni_podaci_raspodela.pdf  
+├── classification_report.py                               <---  helper class for creating reports  
 ├── model.pdf  
-├── model.py  
-├── network.py  
-├── network_one_two.py  
-└── README.md   
+├── model.py                                               <---  class defining model and its helper methods  
+├── network.py                                             <---  network used to train model for one and two letters recognition  
+├── network_one_two.py                                     <---  network used to train model for one vs. two letters classification  
+├── README.md   
+└── test_dcgan.py                                          <---  generate report for gan images  
 
 ```
 
@@ -136,3 +163,18 @@ letters
 
     ```
 
+5. To train DCGAN
+    ```sh
+    python3 dcgan.py [letter] train
+    # example
+    python3 dcgan.py a train
+
+    ```
+
+5. To use DCGAN
+    ```sh
+    python3 dcgan.py [letter] generate
+    # example
+    python3 dcgan.py a generate
+
+    ```

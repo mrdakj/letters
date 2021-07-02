@@ -101,6 +101,13 @@ class Model:
             f.write("Validation %s: %.2f%%\n" % (self.model.metrics_names[1], val_scores[1]*100))
             f.write("Test %s: %.2f%%\n" % (self.model.metrics_names[1], test_scores[1]*100))
 
+    def print_scores(self, test_ds):
+        # evaluate the model
+        test_scores = self.model.evaluate(test_ds)
+        print("Test %s: %.2f%%" % (self.model.metrics_names[1], test_scores[1]*100))
+        with open(f'{self.report_dir}/scores.txt', 'w') as f:
+            f.write("Test %s: %.2f%%\n" % (self.model.metrics_names[1], test_scores[1]*100))
+
     def __get_true_predicted_labels(self, ds):
         val_labels = []
         val_predicted = []
@@ -120,4 +127,9 @@ class Model:
         report.confusion_matrix(test_labels, test_predicted, "confusion_matrix_test")
         report.classification_report(test_labels, test_predicted, "report_test")
 
+    def dump_report(self, test_ds):
+        report = ClassificationReport(self.class_names, self.report_dir)
 
+        test_labels, test_predicted = self.__get_true_predicted_labels(test_ds)
+        report.confusion_matrix(test_labels, test_predicted, "confusion_matrix_test")
+        report.classification_report(test_labels, test_predicted, "report_test")

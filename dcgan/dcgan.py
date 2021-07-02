@@ -18,11 +18,21 @@ import tensorflow.keras.backend as K
 import matplotlib.pyplot as plt
 
 import sys
+import pathlib
 
 import numpy as np
 
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
 class DCGAN():
-    def __init__(self):
+    def __init__(self, letter):
+        self.letter = letter
+
         # Input shape
         self.img_rows = 28
         self.img_cols = 28
@@ -113,35 +123,28 @@ class DCGAN():
     def train(self, epochs, batch_size=128, save_interval=50):
 
         # Load the dataset
-        letters = ['c']
         X_train = []
 
-        base_dir = '../dataset/train/one_letter/medium'
-        for letter in letters:
-            print(letter)
-            for img_name in tqdm.tqdm(os.listdir(base_dir + '/' + letter)):
-                img_path = os.path.join(base_dir, letter, img_name)
-                img = cv2.imread(img_path,  cv2.IMREAD_GRAYSCALE)
-                img = cv2.resize(img, (28, 28))
-                X_train.append(np.array(img))
+        base_dir = f'../dataset/train/one_letter/medium/{self.letter}'
+        for img_name in tqdm.tqdm(os.listdir(base_dir)):
+            img_path = os.path.join(base_dir, img_name)
+            img = cv2.imread(img_path,  cv2.IMREAD_GRAYSCALE)
+            img = cv2.resize(img, (28, 28))
+            X_train.append(np.array(img))
 
-        base_dir = '../dataset/train/one_letter/normal'
-        for letter in letters:
-            print(letter)
-            for img_name in tqdm.tqdm(os.listdir(base_dir + '/' + letter)):
-                img_path = os.path.join(base_dir, letter, img_name)
-                img = cv2.imread(img_path,  cv2.IMREAD_GRAYSCALE)
-                img = cv2.resize(img, (28, 28))
-                X_train.append(np.array(img))
+        base_dir = f'../dataset/train/one_letter/normal/{self.letter}'
+        for img_name in tqdm.tqdm(os.listdir(base_dir)):
+            img_path = os.path.join(base_dir, img_name)
+            img = cv2.imread(img_path,  cv2.IMREAD_GRAYSCALE)
+            img = cv2.resize(img, (28, 28))
+            X_train.append(np.array(img))
 
-        base_dir = '../dataset/train/one_letter/bold'
-        for letter in letters:
-            print(letter)
-            for img_name in tqdm.tqdm(os.listdir(base_dir + '/' + letter)):
-                img_path = os.path.join(base_dir, letter, img_name)
-                img = cv2.imread(img_path,  cv2.IMREAD_GRAYSCALE)
-                img = cv2.resize(img, (28, 28))
-                X_train.append(np.array(img))
+        base_dir = f'../dataset/train/one_letter/bold/{self.letter}'
+        for img_name in tqdm.tqdm(os.listdir(base_dir)):
+            img_path = os.path.join(base_dir, img_name)
+            img = cv2.imread(img_path,  cv2.IMREAD_GRAYSCALE)
+            img = cv2.resize(img, (28, 28))
+            X_train.append(np.array(img))
 
         X_train = np.array(X_train).reshape(len(X_train), 28,28,1)
 
@@ -205,7 +208,7 @@ class DCGAN():
                 axs[i,j].imshow(gen_imgs[cnt, :,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
-        fig.savefig("images/mnist_%d.png" % epoch)
+        fig.savefig(f"training_images/{self.letter}/{epoch}")
         plt.close()
 
     def save_imgs_good(self):
@@ -217,31 +220,31 @@ class DCGAN():
             valid = self.discriminator(gen_imgs)[0]
             if valid >= 0.5:
                 n += 1
-                name = f'img/{n}-{valid}.png'
+                name = f'{n}-{valid}.png'
                 # Rescale images 0 - 1
                 gen_imgs = 0.5 * gen_imgs + 0.5
                 img = gen_imgs[0]
-                cv2.imwrite(name, img*255)
+                cv2.imwrite(f'out/{self.letter}/{name}', img*255)
 
 
 if __name__ == '__main__':
-    dcgan = DCGAN()
+    if len(sys.argv) != 3:
+        sys.exit("Usage: python3 dcgan.py [letter] [train,generate]")
 
-    # try:
-    #     os.rmdir('images')
-    # except OSError:
-    #     print ('images does not exist')
-    # os.mkdir('images')
+    letter = sys.argv[1]
+    train = sys.argv[2] == 'train'
 
-    # dcgan.train(epochs=4000, batch_size=32, save_interval=50)
-    # dcgan.generator.save("saved_model/c_generator")
-    # dcgan.discriminator.save("saved_model/c_discriminator")
+    dcgan = DCGAN(letter)
 
-    try:
-        os.rmdir('img')
-    except OSError:
-        print ('img does not exist')
-    os.mkdir('img')
-    dcgan.generator = tf.keras.models.load_model('saved_model/c_generator')
-    dcgan.discriminator = tf.keras.models.load_model('saved_model/c_discriminator')
-    dcgan.save_imgs_good()
+    if train:
+        pathlib.Path(f'model/{letter}').mkdir(parents=True, exist_ok=True)
+        pathlib.Path(f'training_images/{letter}').mkdir(parents=True, exist_ok=True)
+        dcgan.train(epochs=4000, batch_size=32, save_interval=50)
+        dcgan.generator.save(f"model/{letter}/generator.h5")
+        dcgan.discriminator.save(f"model/{letter}/discriminator.h5")
+    else:
+        pathlib.Path(f'out/{letter}').mkdir(parents=True, exist_ok=True)
+        dcgan.generator = tf.keras.models.load_model(f'model/{letter}/generator.h5')
+        dcgan.discriminator = tf.keras.models.load_model(f'model/{letter}/discriminator.h5')
+        dcgan.save_imgs_good()
+
