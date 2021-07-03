@@ -33,22 +33,22 @@ letters
 │   └── dcgan.py  
 ├── demo                                                    <---  jupyther notebook used to demonstrate models  
 │   ├── one_letter  
-│   │   ├── pogresno_prediktovana_slova.pdf  
-│   │   ├── test_podaci_random_25.pdf  
-│   │   └── trening_podaci.pdf  
+│   │   ├── wrong_predictions.pdf  
+│   │   ├── test_data_random_25.pdf  
+│   │   └── training_data.pdf  
 │   ├── one_two  
-│   │   ├── pogresno_prediktovana_slova.pdf  
-│   │   ├── test_podaci_random_25.pdf  
-│   │   └── trening_podaci.pdf  
+│   │   ├── wrong_predictions.pdf  
+│   │   ├── test_data_random_25.pdf  
+│   │   └── training_data.pdf  
 │   ├── two_letters  
 │   │   ├── first  
-│   │   │   ├── pogresno_prediktovana_slova.pdf  
-│   │   │   ├── test_podaci_random_25.pdf  
-│   │   │   └── trening_podaci.pdf  
+│   │   │   ├── wrong_predictions.pdf  
+│   │   │   ├── test_data_random_25.pdf  
+│   │   │   └── training_data.pdf  
 │   │   └── second  
-│   │       ├── pogresno_prediktovana_slova.pdf  
-│   │       ├── test_podaci_random_25.pdf  
-│   │       └── trening_podaci.pdf  
+│   │       ├── wrong_predictions.pdf  
+│   │       ├── test_data_random_25.pdf  
+│   │       └── training_data.pdf  
 │   └── demo.ipynb  
 ├── include                                                <---  helper class for image manipulation  
 │   ├── image.cpp  

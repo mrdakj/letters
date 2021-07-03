@@ -17,6 +17,7 @@ for letter in string.ascii_lowercase:
 
 
 fig, axs = plt.subplots(26,10, figsize=(10, 26))
+fig.tight_layout()
 
 for i in range(26):
  for j in range(10):
