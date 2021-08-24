@@ -1,5 +1,3 @@
-Team: Jelena Mrdak  
-
 ## :package: Installation
 :exclamation: Requirements: OpenCV, Keras, cmake
 
