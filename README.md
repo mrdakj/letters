@@ -16,6 +16,12 @@ Training and dataset-generation project for handwritten letter recognition. This
 - Produces evaluation reports: accuracy/loss curves, confusion matrices, class reports, and score summaries.
 - Includes a DCGAN experiment for generating additional handwritten letter samples.
 
+## Model Tasks
+
+| Single-letter classification | Letter vs. bigram | First letter in bigram |
+| --- | --- | --- |
+| <img src="docs/one_letter_classification.png" alt="Single-letter classification examples" width="260"> | <img src="docs/letter_vs_bigram.png" alt="Letter vs bigram classification examples" width="260"> | <img src="docs/first_letter_bigram.png" alt="First letter in bigram examples" width="260"> |
+
 ## Results
 
 | Model | Test accuracy |
@@ -41,6 +47,7 @@ Training and dataset-generation project for handwritten letter recognition. This
 |-- components/      # C++ tool for extracting smaller letter images
 |-- merge/           # C++ tool for generating bigram datasets
 |-- demo/            # notebook outputs and visual prediction examples
+|-- docs/            # README preview assets
 |-- model/           # trained Keras .h5 models
 |-- report/          # metrics, curves, confusion matrices, reports
 |-- dcgan/           # handwritten-letter generation experiment
@@ -95,4 +102,4 @@ python3 dcgan/dcgan.py a generate
 
 ## Role in the Text Recognition System
 
-This repository provides the trained models for the companion [Handwritten Text Recognition](../master_text_recognition) project. The recognizer loads exported models to classify segmented components, then combines the predictions with word-level correction to produce final text.
+This repository provides the trained models for [mrdakj/master_text_recognition](https://github.com/mrdakj/master_text_recognition). The recognizer loads exported models to classify segmented components, then combines the predictions with word-level correction to produce final text.
